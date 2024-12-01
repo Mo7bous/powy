@@ -1,0 +1,225 @@
+<html><head><base href=""/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chimpy Locations - Find Your Closest Sales Point</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f9;
+        }
+        #map-container {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            margin: 20px 0;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        #filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        button {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            animation: animateButton 3s infinite;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        @keyframes animateButton {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+        }
+        .popup-content {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            gap: 8px;
+            font-size: 14px;
+            width: 90%;
+        }
+        .popup-content b {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        .popup-icon {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Find Your Closest Sales Point in Brussels</h1>
+
+<div id="filter-container">
+    <button onclick="requestLocationPermission()">
+        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 19.93V19a1 1 0 0 1 1-1h2.93A8 8 0 0 1 13 21.93zm-2 .07V18a1 1 0 0 1-1-1h-3.93A8 8 0 0 1 11 21.93zM3.07 15H5a1 1 0 0 1 1 1v2.93A8 8 0 0 1 3.07 15zm0-2A8 8 0 0 1 12 3V5a1 1 0 0 1-1 1H5.07a8.06 8.06 0 0 1 .07-3zM21 11h-2.93a1 1 0 0 1-1-1V5.07A8 8 0 0 1 21 11zm0 2a8 8 0 0 1-8 8v-2.93a1 1 0 0 1 1-1h2.93A8.06 8.06 0 0 1 21 13z"/>
+        </svg>
+        Ma localisation
+    </button>
+    <button onclick="findClosestLocation()">Closest Location</button>
+</div>
+
+<div id="map-container">
+    <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+    var map = L.map('map').setView([50.85045, 4.34878], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const indianNames = ["Aarav", "Vivaan", "Aditya", "Vihaan", "Sai", "Arjun", "Reyansh", "Krishna", "Ishaan", "Shaurya"];
+    const brusselsLocations = [];
+    
+    for (let i = 0; i < 50; i++) {
+        let lat = 50.8 + Math.random() * 0.1;
+        let lng = 4.3 + Math.random() * 0.1;
+        let randomName = indianNames[Math.floor(Math.random() * indianNames.length)];
+        brusselsLocations.push({
+            id: i,
+            name: `${randomName} SPRL`,
+            coords: [lat, lng],
+            address: `Street ${i + 1}, City`,
+            hours: `${9 + i % 3} AM - ${6 + i % 3} PM`
+        });
+    }
+    
+    const zurichLocations = [
+        { id: 51, name: "Anvi SPRL", coords: [47.231, 8.663], address: "Altweg 1", hours: "9 AM - 7 PM" },
+        { id: 52, name: "Rahul SPRL", coords: [47.236, 8.672], address: "In der Au 15", hours: "10 AM - 8 PM" },
+        { id: 53, name: "Sneha SPRL", coords: [47.243, 8.651], address: "Unterdorfstrasse 10", hours: "8 AM - 6 PM" },
+        { id: 54, name: "Puja SPRL", coords: [47.245, 8.645], address: "Chamer-grund", hours: "9 AM - 5 PM" },
+        { id: 55, name: "Vikram SPRL", coords: [47.249, 8.666], address: "Widum", hours: "11 AM - 9 PM" }
+    ];
+
+    const allLocations = [...brusselsLocations, ...zurichLocations];
+
+    allLocations.forEach(location => {
+        const marker = L.marker(location.coords).addTo(map);
+        marker.bindPopup(`
+            <div class="popup-content">
+                <i class="fas fa-store popup-icon"></i>
+                <div>
+                    <b>${location.name}</b><br>
+                    <span><i class="fas fa-map-marker-alt popup-icon"></i> ${location.address}</span><br>
+                    <span><i class="fas fa-clock popup-icon"></i> Hours: ${location.hours}</span><br>
+                    <button onclick="getDirections(${location.coords[0]}, ${location.coords[1]}); centerOnMarker(${location.coords[0]}, ${location.coords[1]})">Get Directions</button>
+                </div>
+            </div>
+        `);
+    });
+
+    function getDirections(lat, lng) {
+        const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+        window.open(directionsUrl, '_blank');
+    }
+
+    function requestLocationPermission() {
+        if (confirm("Do you want to share your location to find it on the map?")) {
+            showUserLocation();
+        }
+    }
+
+    function showUserLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                const userLocation = [position.coords.latitude, position.coords.longitude];
+                L.marker(userLocation, {
+                    title: "Your Location",
+                    icon: L.icon({
+                        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41],
+                        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-green.png'  // Custom green icon
+                    })
+                }).addTo(map)
+                    .bindPopup(`<b>Your Location</b>`).openPopup();
+                map.setView(userLocation, 15);
+            }, () => {
+                alert("Unable to retrieve your location.");
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    function centerOnMarker(lat, lng) {
+        map.setView([lat, lng], 15);
+    }
+
+    function findClosestLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                let userLat = position.coords.latitude;
+                let userLng = position.coords.longitude;
+                let closestLocation = allLocations.reduce((prev, current) => {
+                    let prevDist = getDistance(userLat, userLng, prev.coords[0], prev.coords[1]);
+                    let currentDist = getDistance(userLat, userLng, current.coords[0], current.coords[1]);
+                    return (prevDist < currentDist) ? prev : current;
+                });
+                centerOnMarker(closestLocation.coords[0], closestLocation.coords[1]);
+                L.popup().setLatLng(closestLocation.coords).setContent(`
+                    <div class="popup-content">
+                        <b>Closest Location:</b> ${closestLocation.name}<br>
+                        ${closestLocation.address}
+                    </div>
+                `).openOn(map);
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
+    function getDistance(lat1, lng1, lat2, lng2) {
+        const R = 6371; // Radius of the Earth in km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = 
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; // Distance in km
+    }
+</script>
+
+</body>
+</html>
