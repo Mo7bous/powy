@@ -4,13 +4,13 @@
     <title>Powy - Restez Connecté</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <style>
         /* General Styles */
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            line-height: 1.6;
             color: #221f20;
             background-color: #f4f4f4;
             overflow-x: hidden; /* Hide horizontal scrollbar */
@@ -145,6 +145,8 @@
             margin: 0 auto; /* Center the content block */
             box-sizing: border-box;
             padding: 1rem;
+            margin-top: 5%;
+            margin-bottom: 5%;
             background-color: #fff;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
@@ -163,10 +165,12 @@
         }
 
         .partner-content, .articles, .service-container, .eco-wrapper {
-            max-width: 90%;
+            max-width: auto;
             margin: 0 auto;
             grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
             gap: 20px;
+            margin-top: 5%;
+            margin-bottom: 5%;
             justify-items: center;
         }
 
@@ -381,7 +385,6 @@
         .modal-body {
             padding: 20px;
             color: #221f20;
-            line-height: 1.5;
         }
 
         .modal-footer {
@@ -393,6 +396,7 @@
         .close-btn {
             cursor: pointer;
             font-size: 1.5em;
+            padding-right: 10px;
         }
 
         .highlight-text {
@@ -439,13 +443,12 @@
             .eco-friendly-practices .practice {
                 flex-direction: column;
                 text-align: center;
-                width: 95%; /* Adjust width slightly to prevent overflow */
+                width: auto; /* Adjust width slightly to prevent overflow */
             }
         }
 
         @media (max-width: 480px) {
             body, .content {
-                padding: 5px;
             }
 
             .eco-friendly-practices .practice img {
@@ -576,9 +579,10 @@
                 text-align: center;
             }
             .partner-card img {
-                width: 100%;
-                height: auto;
-                border-radius: 8px;
+                display: block;
+            width: 90%;
+            height: auto;
+            margin: 0 auto;
             }
             .partner-card h3 {
                 margin: 10px 0;
@@ -616,16 +620,15 @@
             margin-bottom: 20px;
         }
         button {
-            display: flex;
             align-items: center;
-            padding: 10px 20px;
+            padding: 10px 10px;
+            margin-bottom: 10%;
             font-size: 16px;
             border: none;
             background-color: #007bff;
             color: white;
             border-radius: 5px;
             cursor: pointer;
-            animation: animateButton 3s infinite;
         }
         button:hover {
             background-color: #0056b3;
@@ -654,6 +657,180 @@
         }
         .popup-icon {
             font-size: 16px;
+        }
+
+        .eco-friendly-practices{
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            gap: 8px;
+            font-size: 14px;
+            width: auto;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+
+        @keyframes bgMove {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        .main-button {
+            width: 100%;
+            padding: 15px 30px;
+            font-size: 18px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .main-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(44, 62, 80, 0.95);
+            z-index: 1000;
+        }
+
+        .popup-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+        }
+
+        #map {
+            width: 100%;
+            height: calc(100% - 80px);
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 40px;
+            height: 40px;
+            background: #3498db;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .location-btn {
+            position: absolute;
+            bottom: 0.5%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 25px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            z-index: 990;
+            margin-top: 20px;
+        }
+
+        .shop-details {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            display: none;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .directions-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 8px 15px;
+            margin-top: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .directions-btn:hover {
+            background: #2980b9;
+        }
+
+        .shop-hours {
+            margin: 10px 0;
+            padding: 5px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+
+        @keyframes batteryPulse {
+            0% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+            50% {
+                transform: scale(1.05);
+                filter: brightness(1.1);
+            }
+            100% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+        }
+
+        .custom-battery-icon svg {
+            animation: batteryPulse 3s infinite;
+            transform-origin: center;
+        }
+
+        .custom-battery-icon path {
+            transition: fill 0.3s ease;
+        }
+
+        .custom-battery-icon:hover path {
+            fill: #2ecc71;
         }
 
     </style>
@@ -839,164 +1016,210 @@
             </div>
             <h8 id="trouver" class="centered-heading">Où Nous Trouver</h8>
 
-
-<div id="filter-container">
-    <button onclick="requestLocationPermission()">
-        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
-            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 19.93V19a1 1 0 0 1 1-1h2.93A8 8 0 0 1 13 21.93zm-2 .07V18a1 1 0 0 1-1-1h-3.93A8 8 0 0 1 11 21.93zM3.07 15H5a1 1 0 0 1 1 1v2.93A8 8 0 0 1 3.07 15zm0-2A8 8 0 0 1 12 3V5a1 1 0 0 1-1 1H5.07a8.06 8.06 0 0 1 .07-3zM21 11h-2.93a1 1 0 0 1-1-1V5.07A8 8 0 0 1 21 11zm0 2a8 8 0 0 1-8 8v-2.93a1 1 0 0 1 1-1h2.93A8.06 8.06 0 0 1 21 13z"/>
-        </svg>
-        Ma localisation
-    </button>
-    <button onclick="findClosestLocation()">Closest Location</button>
-</div>
-
-<div id="map-container">
-    <div id="map"></div>
-</div>
-
-<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-<script>
-    var map = L.map('map').setView([50.85045, 4.34878], 12);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    const indianNames = ["Aarav", "Vivaan", "Aditya", "Vihaan", "Sai", "Arjun", "Reyansh", "Krishna", "Ishaan", "Shaurya"];
-    const brusselsLocations = [];
-    
-    for (let i = 0; i < 50; i++) {
-        let lat = 50.8 + Math.random() * 0.1;
-        let lng = 4.3 + Math.random() * 0.1;
-        let randomName = indianNames[Math.floor(Math.random() * indianNames.length)];
-        brusselsLocations.push({
-            id: i,
-            name: `${randomName} SPRL`,
-            coords: [lat, lng],
-            address: `Street ${i + 1}, City`,
-            hours: `${9 + i % 3} AM - ${6 + i % 3} PM`
-        });
-    }
-    
-    const zurichLocations = [
-        { id: 51, name: "Anvi SPRL", coords: [50.85045, 4.35878], address: "Altweg 1", hours: "9 AM - 7 PM" },
-        { id: 52, name: "Rahul SPRL", coords: [50.86045, 4.36878], address: "In der Au 15", hours: "10 AM - 8 PM" },
-        { id: 53, name: "Sneha SPRL", coords: [50.87045, 4.37878], address: "Unterdorfstrasse 10", hours: "8 AM - 6 PM" },
-        { id: 54, name: "Puja SPRL", coords: [50.88045, 4.34978], address: "Chamer-grund", hours: "9 AM - 5 PM" },
-        { id: 55, name: "Vikram SPRL", coords: [50.89045, 4.32878], address: "Widum", hours: "11 AM - 9 PM" }
-    ];
-
-    const allLocations = [...brusselsLocations, ...zurichLocations];
-
-    allLocations.forEach(location => {
-        const marker = L.marker(location.coords).addTo(map);
-        marker.bindPopup(`
-            <div class="popup-content">
-                <i class="fas fa-store popup-icon"></i>
-                <div>
-                    <b>${location.name}</b><br>
-                    <span><i class="fas fa-map-marker-alt popup-icon"></i> ${location.address}</span><br>
-                    <span><i class="fas fa-clock popup-icon"></i> Hours: ${location.hours}</span><br>
-                    <button onclick="getDirections(${location.coords[0]}, ${location.coords[1]}); centerOnMarker(${location.coords[0]}, ${location.coords[1]})">Get Directions</button>
+            <div class="animated-bg"></div>
+            <button class="main-button">Open Map</button>
+                
+            <div class="popup">
+                <div class="popup-content">
+                    <button class="close-btn">×</button>
+                    <div id="map"></div>
+                    <div class="shop-details"></div>
+                    <button class="location-btn">Find My Location</button>
                 </div>
-            </div>
-        `);
-    });
 
-    function getDirections(lat, lng) {
-        const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-        window.open(directionsUrl, '_blank');
-    }
 
-    function requestLocationPermission() {
-        if (confirm("Do you want to share your location to find it on the map?")) {
-            showUserLocation();
-        }
-    }
 
-    function showUserLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                const userLocation = [position.coords.latitude, position.coords.longitude];
-                L.marker(userLocation, {
-                    title: "Your Location",
-                    icon: L.icon({
-                        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-                        iconSize: [25, 41],
-                        iconAnchor: [12, 41],
-                        popupAnchor: [1, -34],
-                        shadowSize: [41, 41],
-                        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-green.png'  // Custom green icon
-                    })
-                }).addTo(map)
-                    .bindPopup(`<b>Your Location</b>`).openPopup();
-                map.setView(userLocation, 15);
-            }, () => {
-                alert("Unable to retrieve your location.");
-            });
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
-    }
-
-    function centerOnMarker(lat, lng) {
-        map.setView([lat, lng], 15);
-    }
-
-    function findClosestLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                let userLat = position.coords.latitude;
-                let userLng = position.coords.longitude;
-                let closestLocation = allLocations.reduce((prev, current) => {
-                    let prevDist = getDistance(userLat, userLng, prev.coords[0], prev.coords[1]);
-                    let currentDist = getDistance(userLat, userLng, current.coords[0], current.coords[1]);
-                    return (prevDist < currentDist) ? prev : current;
-                });
-                centerOnMarker(closestLocation.coords[0], closestLocation.coords[1]);
-                L.popup().setLatLng(closestLocation.coords).setContent(`
-                    <div class="popup-content">
-                        <b>Closest Location:</b> ${closestLocation.name}<br>
-                        ${closestLocation.address}
-                    </div>
-                `).openOn(map);
-            });
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
-    }
-
-    function getDistance(lat1, lng1, lat2, lng2) {
-        const R = 6371; // Radius of the Earth in km
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLng = (lng2 - lng1) * Math.PI / 180;
-        const a = 
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-            Math.sin(dLng / 2) * Math.sin(dLng / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c; // Distance in km
-    }
 </script>
 
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        const mainButton = document.querySelector('.main-button');
+        const popup = document.querySelector('.popup');
+        const closeBtn = document.querySelector('.close-btn');
+        const locationBtn = document.querySelector('.location-btn');
+        const shopDetails = document.querySelector('.shop-details');
+        let map;
+        let userMarker;
 
+        const shops = [
+            { city: "Brussels", coords: [50.8503, 4.3517], shops: [
+                { name: "Shop 1", coords: [50.8603, 4.3617], details: "Specialty Shop in Brussels", hours: "Mon-Fri: 9:00-18:00\nSat: 10:00-16:00\nSun: Closed" },
+                { name: "Shop 2", coords: [50.8403, 4.3417], details: "Local Store in Brussels", hours: "Mon-Sat: 8:00-20:00\nSun: 10:00-16:00" },
+                { name: "Shop 3", coords: [50.8503, 4.3617], details: "Market in Brussels", hours: "Mon-Sun: 7:00-22:00" },
+                { name: "Shop 4", coords: [50.8603, 4.3417], details: "Boutique in Brussels", hours: "Mon-Fri: 10:00-19:00\nSat: 11:00-18:00\nSun: Closed" },
+                { name: "Shop 5", coords: [50.8453, 4.3557], details: "Shopping Center in Brussels", hours: "Mon-Sun: 9:00-21:00" }
+            ]},
+            { city: "Wädenswil", coords: [47.2274, 8.6745], shops: [
+                { name: "Shop 1", coords: [47.2374, 8.6845], details: "Specialty Shop in Wädenswil", hours: "Mon-Fri: 9:00-18:30\nSat: 9:00-17:00\nSun: Closed" },
+                { name: "Shop 2", coords: [47.2174, 8.6645], details: "Local Store in Wädenswil", hours: "Mon-Sat: 8:00-20:00\nSun: Closed" },
+                { name: "Shop 3", coords: [47.2274, 8.6845], details: "Market in Wädenswil", hours: "Mon-Fri: 8:00-19:00\nSat: 8:00-17:00\nSun: Closed" },
+                { name: "Shop 4", coords: [47.2374, 8.6645], details: "Boutique in Wädenswil", hours: "Mon-Fri: 10:00-18:30\nSat: 10:00-16:00\nSun: Closed" },
+                { name: "Shop 5", coords: [47.2224, 8.6785], details: "Shopping Center in Wädenswil", hours: "Mon-Sat: 9:00-20:00\nSun: Closed" }
+            ]},
+            { city: "Bern", coords: [46.9479, 7.4474], shops: [
+                { name: "Shop 1", coords: [46.9579, 7.4574], details: "Specialty Shop in Bern", hours: "Mon-Fri: 9:00-18:00\nSat: 9:00-16:00\nSun: Closed" },
+                { name: "Shop 2", coords: [46.9379, 7.4374], details: "Local Store in Bern", hours: "Mon-Sat: 8:00-19:00\nSun: Closed" },
+                { name: "Shop 3", coords: [46.9479, 7.4574], details: "Market in Bern", hours: "Mon-Sun: 8:00-20:00" },
+                { name: "Shop 4", coords: [46.9579, 7.4374], details: "Boutique in Bern", hours: "Mon-Fri: 10:00-19:00\nSat: 10:00-17:00\nSun: Closed" },
+                { name: "Shop 5", coords: [46.9429, 7.4514], details: "Shopping Center in Bern", hours: "Mon-Sat: 9:00-20:00\nSun: Closed" }
+            ]},
+            { city: "Amsterdam", coords: [52.3676, 4.9041], shops: [
+                { name: "Shop 1", coords: [52.3776, 4.9141], details: "Specialty Shop in Amsterdam", hours: "Mon-Fri: 9:00-18:00\nSat: 10:00-17:00\nSun: 12:00-17:00" },
+                { name: "Shop 2", coords: [52.3576, 4.8941], details: "Local Store in Amsterdam", hours: "Mon-Sat: 8:00-22:00\nSun: 10:00-20:00" },
+                { name: "Shop 3", coords: [52.3676, 4.9141], details: "Market in Amsterdam", hours: "Mon-Sun: 8:00-23:00" },
+                { name: "Shop 4", coords: [52.3776, 4.8941], details: "Boutique in Amsterdam", hours: "Mon-Fri: 10:00-19:00\nSat: 11:00-18:00\nSun: 12:00-17:00" },
+                { name: "Shop 5", coords: [52.3626, 4.9081], details: "Shopping Center in Amsterdam", hours: "Mon-Sun: 9:00-21:00" }
+            ]},
+            { city: "Rabat", coords: [34.0209, -6.8416], shops: [
+                { name: "Shop 1", coords: [34.0309, -6.8316], details: "Specialty Shop in Rabat", hours: "Mon-Fri: 9:00-19:00\nSat: 9:00-17:00\nSun: Closed" },
+                { name: "Shop 2", coords: [34.0109, -6.8516], details: "Local Store in Rabat", hours: "Mon-Sat: 8:00-20:00\nSun: 9:00-13:00" },
+                { name: "Shop 3", coords: [34.0209, -6.8316], details: "Market in Rabat", hours: "Mon-Sun: 7:00-21:00" },
+                { name: "Shop 4", coords: [34.0309, -6.8516], details: "Boutique in Rabat", hours: "Mon-Fri: 10:00-19:30\nSat: 10:00-18:00\nSun: Closed" },
+                { name: "Shop 5", coords: [34.0159, -6.8376], details: "Shopping Center in Rabat", hours: "Mon-Sun: 10:00-22:00" }
+            ]}
+        ];
+
+        mainButton.addEventListener('click', () => {
+            popup.style.display = 'block';
+            if (!map) {
+                initMap();
+            }
+        });
+
+        closeBtn.addEventListener('click', () => {
+            popup.style.display = 'none';
+            shopDetails.style.display = 'none';
+        });
+
+        function initMap() {
+            map = L.map('map').setView([50.8503, 4.3517], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            const batteryIcon = L.divIcon({
+                className: 'custom-battery-icon',
+                html: `<div style="
+                    width: 30px;
+                    height: 30px;
+                    position: relative;
+                    transform: translate(-50%, -50%);
+                ">
+                    <svg viewBox="0 0 24 24" width="30" height="30">
+                        <path fill="#3498db" d="M16.67,4H15V2H9v2H7.33C6.6,4,6,4.6,6,5.33v15.33C6,21.4,6.6,22,7.33,22h9.33
+                        c0.74,0,1.34-0.6,1.34-1.33V5.33C18,4.6,17.4,4,16.67,4z M16,18H8V8h8V18z"/>
+                        <clipPath id="batteryMask">
+                            <rect x="8" y="8" width="8" height="10"/>
+                        </clipPath>
+                        <rect class="battery-fill" x="8" y="18" width="8" height="10" fill="#2ecc71" clip-path="url(#batteryMask)">
+                            <animate 
+                                attributeName="y" 
+                                from="18" 
+                                to="8"
+                                dur="2s"
+                                repeatCount="indefinite"
+                                begin="0s"
+                                fill="freeze"
+                                calcMode="spline"
+                                keySplines="0.42 0 0.58 1"
+                            />
+                        </rect>
+                    </svg>
+                </div>`,
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+
+            shops.forEach(city => {
+                city.shops.forEach(shop => {
+                    const marker = L.marker(shop.coords, {
+                        icon: batteryIcon
+                    }).addTo(map);
+                    
+                    marker.on('click', () => {
+                        shopDetails.innerHTML = `
+                            <h3>${shop.name}</h3>
+                            <p>${shop.details}</p>
+                            <div class="shop-hours">
+                                <strong>Opening Hours:</strong><br>
+                                ${shop.hours.replace(/\n/g, '<br>')}
+                            </div>
+                            <p>Location: ${city.city}</p>
+                            <button class="directions-btn" onclick="getDirections(${shop.coords[0]}, ${shop.coords[1]})">
+                                Get Directions
+                            </button>
+                        `;
+                        shopDetails.style.display = 'block';
+                    });
+                });
+            });
+
+            map.on('click', () => {
+                shopDetails.style.display = 'none';
+            });
+        }
+
+        function getDirections(lat, lng) {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isIOS = /iphone|ipad|ipod/.test(userAgent);
+            const isAndroid = /android/.test(userAgent);
+
+            if (isIOS) {
+                window.location.href = `maps://maps.apple.com/?daddr=${lat},${lng}`;
+            } else if (isAndroid) {
+                window.location.href = `geo:0,0?q=${lat},${lng}`;
+            } else {
+                window.location.href = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+            }
+        }
+
+        locationBtn.addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        if (userMarker) {
+                            map.removeLayer(userMarker);
+                        }
+                        userMarker = L.marker([latitude, longitude], {
+                            icon: L.divIcon({
+                                className: 'user-location',
+                                html: `<div style="
+                                    width: 20px;
+                                    height: 20px;
+                                    background: #3498db;
+                                    border-radius: 50%;
+                                    border: 3px solid white;
+                                    box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+                                "></div>`
+                            })
+                        }).addTo(map);
+                        map.setView([latitude, longitude], 15);
+                    },
+                    (error) => {
+                        alert('Unable to find your location. Please ensure location services are enabled.');
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by your browser');
+            }
+        });
+    </script>
 
 
         </section>
 
         <section id="qui-sommes-nous">
-            <img src="https://images.unsplash.com/photo-1527525443983-6e60c75fff46?q=80&w=1285&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Notre Équipe chez Powy" class="qui-sommes-nous-img">
-            <p2><i class="fa-solid fa-leaf"></i>Chez Powy, nous sommes passionnés par l'idée de fournir des solutions de recharge écologiques tout en rendant l'énergie accessible et pratique pour tous. Notre mission est de contribuer à un avenir durable, tout en simplifiant les vies grâce à des solutions novatrices d'énergie portable.</p2>
+            <p2><i class="fa-solid fa-leaf"></i>Chez Powy, nous sommes passionnés par l'idée de fournir des solutions de recharge écologiques tout en rendant l'énergie accessible et pratique pour tous.</p2>
+            <p2><i class="fa-solid fa-solar-panel"></i>Notre mission est de contribuer à un avenir durable, tout en simplifiant les vies grâce à des solutions novatrices d'énergie portable.</p2>
             <p2><i class="fa-solid fa-recycle"></i>Louer peut devenir un mode de vie durable - Powy a été fondé en tant que start-up en 2024, et depuis, nous avons grandi et évolué de manière organique.</p2>
             <p2><i class="fa-solid fa-battery-full"></i>Nous sommes déterminés à fournir le meilleur service à ceux qui tombent en panne de batterie pendant leur déplacement.</p2>
-            <p2><i class="fa-solid fa-globe"></i>Nos objectifs et nos valeurs sont demeurés les mêmes; nous améliorons constamment l'efficacité de notre travail quotidien sur le plan des ressources.</p2>
-            </ul>
+            <p2><i class="fa-solid fa-globe"></i>Nos objectifs et nos valeurs sont demeurés les mêmes; nous améliorons constamment l'efficacité de notre travail quotidien sur le plan des ressources.</p2>        </ul>
 
             <div class="eco-wrapper">
                 <div class="eco-friendly-practices">
                     <div class="practice">
-                        <img src="https://images.unsplash.com/photo-1674331718392-02ff7baefb4b?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Image of solar energy concept" width="100" height="100">
+                        <img src="https://images.unsplash.com/photo-1674331718392-02ff7baefb4b?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Image of solar energy concept" width="auto" height="auto">
                         <div>
                             <h4>Pratique et accessible à tout moment</h4>
                             <p>Notre service est conçu pour offrir une solution ultra-pratique et rapide. Où que vous soyez, vous pouvez facilement accéder à nos batteries externes pour garder vos appareils toujours chargés.</p>
@@ -1021,23 +1244,22 @@
         </section>
 
         <section id="partenaire">
-            <p>Offrez un service à fort impact :</p>
+            <br></br>
             <div class="partner-content">
                 <div class="partner-card">
-                    <img src="https://www.nightandday.be/wp-content/uploads/2022/12/photo-nd-850x540.jpg" alt="Retail image">
                     <h3>Commerce de Détail</h3>
                     <p>Notre solution libre-service est idéale pour les commerces disposant de personnel, tels que les chaînes de magasins et les épiceries. Offrez à vos clients une expérience simple et rapide de recharge de leurs appareils.</p>
-                    <a class="cta-button" href="#commerce" onclick="showModal('Commerce de Détail', 'Notre solution libre-service est adaptable aux commerces traditionnels, offrant une gestion facile.', 'https://dummyimage.com/400x200/ddd/000.png&amp;text=Detail+image')">En savoir plus</a>
+                    <a class="cta-button" href="#commerce" onclick="showModal('Commerce de Détail', 'Le produit Powy se distingue par sa capacité à offrir une visibilité exceptionnelle à tous nos partenaires en mettant en avant leur point de vente sur notre plateforme innovante et largement consultée. Cette visibilité accrue permet non seulement d\'attirer davantage de clients, mais aussi de fidéliser ceux existants grâce à une solution pratique et moderne. En parallèle, Powy garantit une disponibilité continue des batteries mises à disposition grâce à un système de gestion intelligent et automatisé. Ce système prend en charge les retours rapides et les commandes anticipées, évitant ainsi toute rupture de stock et assurant que chaque point de vente puisse répondre aux besoins des utilisateurs à tout moment, même en période de forte demande. Avec Powy, vous bénéficiez donc d\'un produit conçu pour optimiser la satisfaction des clients et simplifier la gestion au quotidien, tout en renforçant l\'attractivité de votre établissement et votre positionnement dans le secteur des solutions de recharge portable.', 'https://dummyimage.com/400x200/ddd/000.png&amp;text=Detail+image')">En savoir plus</a>
                 </div>
+                <br></br>
                 <div class="partner-card">
-                    <img src="https://images.unsplash.com/photo-1621546378497-cb2a5d3a6a67?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Distributor image">
                     <h3>Distributeurs Automatiques</h3>
                     <p>Intégrez nos batteries externes dans vos distributeurs automatiques existants pour offrir une solution de recharge rapide et accessible, directement à vos clients.</p>
                     <a class="cta-button" href="#distributeurs" onclick="showModal('Distributeurs Automatiques', 'Intégrez nos bornes dans vos distributeurs pour une commodité accrue.', 'https://dummyimage.com/400x200/viv/000.png&amp;text=Distributor+image')">En savoir plus</a>
                 </div>
+                <br></br>
                 <div class="partner-card">
-                    <img src="https://images.unsplash.com/photo-1542509058-4b08b0a5a828?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Machine image">
-                    <h3>Solutions de Recharge pour Événements</h3>
+                    <h3>Solutions pour Événements</h3>
                     <p>Nous offrons des solutions de recharge en mettant à disposition un grand nombre de power banks, garantissant à vos participants une autonomie complète tout au long de votre événement professionnel</p>
                     <a class="cta-button" href="#machines" onclick="showModal('Machines Autonomes', 'IDéal pour les espaces non surveillés, nos machines fournissent des solutions de recharge efficaces.', 'https://dummyimage.com/400x200/eee/000.png&amp;text=Machine+image')">En savoir plus</a>
                 </div>
